@@ -122,7 +122,7 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		if (wParam == IDM_ABOUT)
 		{
-			DialogBox(gInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hDlg, DlgProc);
+			DialogBox(gInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hDlg, AboutBox);
 		}
 		if (wParam == PATCH)
 		{
