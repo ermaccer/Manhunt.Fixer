@@ -37,7 +37,7 @@ bool VerifyManhuntGameData()
 {
 	for (int i = 0; i < 4; i++)
 	{
-		if (std::experimental::filesystem::exists(strBadFilesToCheck[i]))
+		if (std::filesystem::exists(strBadFilesToCheck[i]))
 		{
 			if (MessageBox(GlobalHWND, L"One or more changes featured in some other fix have been found in your Manhunt directory. "
 				"Please remove added files them or rename files back to original filename. Revert your NVIDIA Control Panel settings, if you have made any changes."
@@ -55,7 +55,7 @@ bool VerifyManhuntGameData()
 
 	for (int i = 0; i < 14; i++)
 	{
-		if (!std::experimental::filesystem::exists(strFilesToCheck[i]))
+		if (!std::filesystem::exists(strFilesToCheck[i]))
 		{
 			Log::Message(L"ERROR: %s | %s %s\n", L"VerifyManhuntGameData", L"Could not find file:", strFilesToCheck[i].c_str());
 			PushErrorMessage();

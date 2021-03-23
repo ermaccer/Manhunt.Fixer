@@ -90,8 +90,12 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		hBar = GetDlgItem(hDlg, PROGBAR);
 		hCurrentTask = GetDlgItem(hDlg, TASK_INFO);
 		TaskManager::InitItemsToDownload();
-		CreateTooltip(GetDlgItem(hDlg,ENH_WSTEXT), L"Replaces frontend textures with rescaled 1920x1080 ones.");
+
+		CreateTooltip(GetDlgItem(hDlg, ENH_WSTEXT), L"Replaces frontend textures with rescaled 1920x1080 ones.");
 		CreateTooltip(GetDlgItem(hDlg, ENH_PMH), L"Allows to skip Legal screen, access debug menu and more.");
+		CreateTooltip(GetDlgItem(hDlg, ENH_BLDFIX), L"Replaces wrong player blood/damage textures with fixed ones so the effect looks like on PS2. (File - frontend_pc.txd)");
+		CreateTooltip(GetDlgItem(hDlg, ENH_PS2CASH), L"PS2 texture for player model. (File - cash_pc.txd)");
+		CreateTooltip(GetDlgItem(hDlg, ENH_MDLFIX), L"Fixes missing texture on rats & crows (File - gmodelspc.dff)");
         return (INT_PTR)TRUE;
 
 	case WM_CLOSE:
@@ -144,7 +148,20 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					if (IsDlgButtonChecked(hDlg, ENH_WSTEXT))
 						TaskManager::AddDownload(L"https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/manhunt/Manhunt.WidescreenFrontend.zip", L"Manhunt.WidescreenFrontend.zip");
-	
+
+
+					if (IsDlgButtonChecked(hDlg, ENH_BLDFIX))
+						TaskManager::AddDownload(L"https://github.com/ermaccer/Manhunt.Fixer/raw/master/bloodfix.zip", L"bloodfix.zip");
+
+
+					if (IsDlgButtonChecked(hDlg, ENH_PS2CASH))
+						TaskManager::AddDownload(L"https://github.com/ermaccer/Manhunt.Fixer/raw/master/ps2cash.zip", L"ps2cash.zip");
+
+
+					if (IsDlgButtonChecked(hDlg, ENH_MDLFIX))
+						TaskManager::AddDownload(L"https://github.com/ermaccer/Manhunt.Fixer/raw/master/gmodels_fix.zip", L"gmodels_fix.zip");
+
+
 					if (IsDlgButtonChecked(hDlg, ENH_PMH))
 						TaskManager::AddDownload(L"https://github.com/ermaccer/Manhunt.PluginMH/releases/latest/download/PluginMH.zip", L"PluginMH.zip");
 

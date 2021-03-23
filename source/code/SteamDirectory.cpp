@@ -46,15 +46,15 @@ void ProcessLibraryFolders()
 	wchar_t buffer[MAX_PATH] = {};
 	std::wstring strSteamPath = FindSteamDirectory();
 
-	std::experimental::filesystem::current_path(strSteamPath);
+	std::filesystem::current_path(strSteamPath);
 
 	std::wstring strSteamApps = L"steamapps";
 
-	if (std::experimental::filesystem::exists(strSteamApps))
+	if (std::filesystem::exists(strSteamApps))
 	{
-		std::experimental::filesystem::current_path(strSteamApps);
+		std::filesystem::current_path(strSteamApps);
 
-		Log::Message(L"INFO: Working path: %s\n", std::experimental::filesystem::current_path().c_str());
+		Log::Message(L"INFO: Working path: %s\n", std::filesystem::current_path().c_str());
 
 		std::wifstream pLibraryFolders(L"libraryfolders.vdf");
 
@@ -104,18 +104,18 @@ void FindManhuntManifest()
 			if (bIsManhuntPathAvailable)
 				break;
 
-			std::experimental::filesystem::current_path(vLibraryPaths[i]);
-			std::experimental::filesystem::current_path(L"steamapps");
+			std::filesystem::current_path(vLibraryPaths[i]);
+			std::filesystem::current_path(L"steamapps");
 
 			std::wstring strCommon = L"common";
 
-			if (std::experimental::filesystem::exists(strCommon))
+			if (std::filesystem::exists(strCommon))
 			{
-				Log::Message(L"INFO: %s | %s %s\n", L"FindManhuntManifest", L"Scanning: ", std::experimental::filesystem::current_path().wstring().c_str());
+				Log::Message(L"INFO: %s | %s %s\n", L"FindManhuntManifest", L"Scanning: ", std::filesystem::current_path().wstring().c_str());
 
-				for (const auto & file : std::experimental::filesystem::directory_iterator(std::experimental::filesystem::current_path()))
+				for (const auto & file : std::filesystem::directory_iterator(std::filesystem::current_path()))
 				{
-					if (!std::experimental::filesystem::is_directory(file.path().wstring()) && !bIsManhuntPathAvailable)
+					if (!std::filesystem::is_directory(file.path().wstring()) && !bIsManhuntPathAvailable)
 					{
 						if (file.path().extension().wstring() == L".acf")
 						{
@@ -130,7 +130,7 @@ void FindManhuntManifest()
 								std::wifstream pACF(file.path().wstring());
 								auto root = tyti::vdf::read(pACF);
 								std::wstring installpath = root.attribs[L"installdir"];
-								strManhuntPath = std::experimental::filesystem::current_path().wstring() + L"\\" +strCommon + L"\\" + installpath;
+								strManhuntPath = std::filesystem::current_path().wstring() + L"\\" +strCommon + L"\\" + installpath;
 								Log::Message(L"INFO: %s | %s %s \n", L"FindManhuntManifest", L"Manhunt location:  ", strManhuntPath.c_str());
 								bIsManhuntPathAvailable = true;
 								break;

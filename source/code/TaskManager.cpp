@@ -35,11 +35,19 @@ std::wstring strCheckFiles[] = {
 	L"d3d8.dll",
 	L"d3d8.ini",
 	L"dinput8.dll",
+	L"ddraw.dll",
 	L"scripts\\AudioFix.asi",
 	// in case they are in root
 	L"AudioFix.asi",
 	L"Manhunt.WidescreenFix.asi",
 	L"Manhunt.WidescreenFix.ini",
+	// backups
+	// blood fix 
+	L"pictures\\frontend_pc.txd.bak",
+	// ps2 cash
+	L"levels\\global\\charpak\\cash_pc.bak"
+	// models fix
+	L"levels\\global\\pak\\gmodelspc.bak"
 };
 
 
@@ -87,7 +95,7 @@ void TaskManager::TaskSetName(std::wstring name)
 void TaskManager::TaskBegin(std::wstring name)
 {
 	SendMessage(*hProgressBar, PBM_SETSTATE, PBST_NORMAL, 0);
-	std::experimental::filesystem::current_path(strGamePath);
+	std::filesystem::current_path(strGamePath);
 	TaskSetName(name);
 }
 
@@ -116,10 +124,10 @@ bool TaskManager::TaskVerifyGameData()
 
 bool TaskManager::TaskDownloadRequiredFiles()
 {
-	if (!std::experimental::filesystem::exists(L"temp"))
-		std::experimental::filesystem::create_directory(L"temp");
+	if (!std::filesystem::exists(L"temp"))
+		std::filesystem::create_directory(L"temp");
 
-	std::experimental::filesystem::current_path(L"temp");
+	std::filesystem::current_path(L"temp");
 
 	bool bResult = true;
 	for (int i = 0; i < vDownloads.size(); i++)
@@ -132,7 +140,7 @@ bool TaskManager::TaskDownloadRequiredFiles()
 bool TaskManager::TaskUnzipDownloadedFiles()
 {
 	TaskBegin(L"Decompressing Archives");
-	std::experimental::filesystem::current_path(L"temp");
+	std::filesystem::current_path(L"temp");
 	bool bResult = true;
 	for (int i = 0; i < vDownloads.size(); i++)
 	{
@@ -140,34 +148,92 @@ bool TaskManager::TaskUnzipDownloadedFiles()
 		std::string tmp("", file.length());
 		std::copy(file.begin(), file.end(), tmp.begin());
 		Unzipper zip(tmp);
-		bResult  = zip.extract("..");
+		bResult = zip.extract("..");
 		if (!bResult)
 			break;
 		if (bResult)
 			zip.close();
 
 		_wremove(vDownloads[i].name.c_str());
+
+
 		Log::Message(L"INFO: %s | %s %s\n", L"TaskUnzipDownloadedFiles", L"Decompressing: ", vDownloads[i].name.c_str());
 	}
-	// move frontendtextures
-	std::experimental::filesystem::current_path(L"..");
-	
-	if (std::experimental::filesystem::exists("Manhunt.WidescreenFrontend"))
-	{
-		if (std::experimental::filesystem::is_directory("Manhunt.WidescreenFrontend"))
-		{
-			std::experimental::filesystem::current_path(L"Manhunt.WidescreenFrontend");
 
-			for (const auto & file : std::experimental::filesystem::recursive_directory_iterator(std::experimental::filesystem::current_path()))
+
+	std::filesystem::current_path(L"..");
+
+	// if scripts still doesnt exist somehow
+
+	if (!std::filesystem::exists("scripts"))
+	{
+		std::filesystem::create_directory("scripts");
+	}
+
+	// move audiofix
+	if (std::filesystem::exists("AudioFix.asi"))
+	{
+		std::filesystem::rename("AudioFix.asi", "scripts\\AudioFix.asi");
+	}
+
+
+	// rename asi loader
+	if (std::filesystem::exists("dinput8.dll"))
+	{
+		std::filesystem::rename("dinput8.dll", "ddraw.dll");
+	}
+
+	// blood
+	if (std::filesystem::exists("bloodfix.txd"))
+	{
+		if (std::filesystem::exists("pictures\\frontend_pc.txd"))
+		{
+			std::filesystem::rename("pictures\\frontend_pc.txd", "pictures\\frontend_pc.txd.bak");
+			Log::Message(L"INFO: %s | %s %s %s\n", L"TaskUnzipDownloadedFiles", L"A copy of previous frontend_pc.txd has been saved as", L"frontend_pc.txd.bak", L"You may remove it on your own");
+		}
+		std::filesystem::rename("bloodfix.txd", "pictures\\frontend_pc.txd");
+	}
+
+	// ps2 cash
+	if (std::filesystem::exists("ps2cash.txd"))
+	{
+		if (std::filesystem::exists("levels\\global\\charpak\\cash_pc.txd"))
+		{
+			std::filesystem::rename("levels\\global\\charpak\\cash_pc.txd", "levels\\global\\charpak\\cash_pc.bak");
+			Log::Message(L"INFO: %s | %s %s %s\n", L"TaskUnzipDownloadedFiles", L"A copy of previous cash_pc.txd has been saved as", L"cash_pc.bak", L"You may remove it on your own");
+		}
+		std::filesystem::rename("ps2cash.txd", "levels\\global\\charpak\\cash_pc.txd");
+	}
+
+
+	// models fix
+	if (std::filesystem::exists("gmodels_fix.dff"))
+	{
+		if (std::filesystem::exists("levels\\global\\pak\\gmodelspc.dff"))
+		{
+			std::filesystem::rename("levels\\global\\pak\\gmodelspc.dff", "levels\\global\\pak\\gmodelspc.bak");
+			Log::Message(L"INFO: %s | %s %s %s\n", L"TaskUnzipDownloadedFiles", L"A copy of previous gmodelspc.dff has been saved as", L"gmodelspc.bak", L"You may remove it on your own");
+		}
+		std::filesystem::rename("gmodels_fix.dff", "levels\\global\\pak\\gmodelspc.dff");
+	}
+	
+
+	// move wide screen textures
+	if (std::filesystem::exists("Manhunt.WidescreenFrontend"))
+	{
+		if (std::filesystem::is_directory("Manhunt.WidescreenFrontend"))
+		{
+			std::filesystem::current_path(L"Manhunt.WidescreenFrontend");
+
+			for (const auto & file : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
 			{
 				size_t len = strGamePath.length() + wcslen(L"\\") + wcslen(L"Manhunt.WidescreenFrontend");
-				std::wstring oldPath = file.path().wstring().substr(len + 1,file.path().wstring().length() - len);
+				std::wstring oldPath = file.path().wstring().substr(len + 1, file.path().wstring().length() - len);
 				std::wstring newPath = L"..\\" + oldPath;
-				std::experimental::filesystem::copy(oldPath,newPath,std::experimental::filesystem::copy_options::overwrite_existing);
+				std::filesystem::copy(oldPath, newPath, std::filesystem::copy_options::overwrite_existing);
 				_wremove(oldPath.c_str());
 			}
 		}
-
 	}
 
 
@@ -179,9 +245,9 @@ bool TaskManager::TaskPossiblyDeleteExistingFiles()
 	bool bResult = true;
 	TaskBegin(L"Checking for existing files");
 
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < sizeof(strCheckFiles[0]) / sizeof(strCheckFiles); i++)
 	{
-		if (std::experimental::filesystem::exists(strCheckFiles[i]))
+		if (std::filesystem::exists(strCheckFiles[i]))
 		{
 			Log::Message(L"INFO: %s | %s %s\n", L"TaskPossiblyDeleteExistingFiles", L"Remove: ", strCheckFiles[i].c_str());
 			_wremove(strCheckFiles[i].c_str());
@@ -198,11 +264,11 @@ bool TaskManager::TaskPatchExecutable()
 	DWORD dwOffset = 0x8DE;
 
 	TaskBegin(L"Patching executable");
-	if (std::experimental::filesystem::exists(L"testapp.exe"))
+	if (std::filesystem::exists(L"testapp.exe"))
 	{
-		std::experimental::filesystem::rename(L"manhunt.exe", L"manhunt.exe.backup");
-		std::experimental::filesystem::rename(L"testapp.exe", L"manhunt.exe");
-		Log::Message(L"INFO: %s | %s %s %s\n", L"TaskPatchExecutable", L"A copy of previous executable has been saved as", L"manhunt.exe.backup",L"You may remove it on your own");
+		std::filesystem::rename(L"manhunt.exe", L"manhunt.exe.backup");
+		std::filesystem::rename(L"testapp.exe", L"manhunt.exe");
+		Log::Message(L"INFO: %s | %s %s %s\n", L"TaskPatchExecutable", L"A copy of previous executable has been saved as", L"manhunt.exe.backup", L"You may remove it on your own");
 	}
 	std::ifstream pReadExecutable(L"manhunt.exe", std::ifstream::binary);
 	pReadExecutable.seekg(dwOffset, std::ifstream::beg);
@@ -224,7 +290,7 @@ bool TaskManager::TaskPatchExecutable()
 	}
 
 
-	
+
 	return TaskEnd(&bResult);
 }
 
@@ -232,14 +298,14 @@ bool TaskManager::TaskApply60FPSLimit()
 {
 	bool bResult = true;
 	TaskBegin(L"Configuring");
-	if (std::experimental::filesystem::exists(L"temp"))
-	  std::experimental::filesystem::remove_all(L"temp");
-	if (std::experimental::filesystem::exists(L"Manhunt.WidescreenFrontend"))
-		std::experimental::filesystem::remove_all(L"Manhunt.WidescreenFrontend");
+	if (std::filesystem::exists(L"temp"))
+		std::filesystem::remove_all(L"temp");
+	if (std::filesystem::exists(L"Manhunt.WidescreenFrontend"))
+		std::filesystem::remove_all(L"Manhunt.WidescreenFrontend");
 
-	if (std::experimental::filesystem::exists(L"d3d8.ini"))
+	if (std::filesystem::exists(L"d3d8.ini"))
 	{
-		std::wstring path = std::experimental::filesystem::current_path().wstring() + L"\\d3d8.ini";
+		std::wstring path = std::filesystem::current_path().wstring() + L"\\d3d8.ini";
 		WritePrivateProfileString(L"MAIN", L"FPSLimit", L"60", path.c_str());
 
 		Log::Message(L"INFO: %s | %s\n", L"TaskApply60FPSLimit", L"Configuration set");
@@ -255,7 +321,7 @@ bool TaskManager::TaskApply60FPSLimit()
 
 void TaskManager::TaskComplete()
 {
-	SendMessage(*hProgressBar, PBM_SETPOS,6, 0);
+	SendMessage(*hProgressBar, PBM_SETPOS, 6, 0);
 }
 
 void AskForPMHSettings()
@@ -263,7 +329,7 @@ void AskForPMHSettings()
 
 	if (MessageBox(GlobalHWND, L"PluginMH has been installed. Do you wish to open configuration file? \n\nPlease remember that if any update is available, you need to update it manually", TOOL_NAME, MB_ICONINFORMATION | MB_YESNO) == IDYES)
 	{
-		std::experimental::filesystem::current_path(strGamePath);
+		std::filesystem::current_path(strGamePath);
 		ShellExecute(0, 0, L"PluginMH.ini", 0, 0, SW_SHOW);
 	}
 

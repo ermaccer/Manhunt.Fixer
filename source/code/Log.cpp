@@ -17,14 +17,14 @@ wchar_t log_buff[1024];
 
 void Log::Init()
 {
-	strLastPath = std::experimental::filesystem::current_path().wstring();
+	strLastPath = std::filesystem::current_path().wstring();
 	strLogPath = strLastPath + L"\\" + LOG_FILE;
 	LogFile = _wfopen(strLogPath.c_str(), L"a+");
 	if (LogFile)
 	{
 		time_t tt;
 		time(&tt);
-	    Log:Message(L"Manhunt Fixer Logging Started - %s\n", _wctime(&tt));
+	    Message(L"Manhunt Fixer Logging Started - %s\n", _wctime(&tt));
 	}
 	fclose(LogFile);
 }

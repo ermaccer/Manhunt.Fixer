@@ -70,16 +70,16 @@ std::wstring   SetFolderFromButton(HWND hWnd)
 
 bool ValidatePath(std::wstring path)
 {
-	if (!std::experimental::filesystem::exists(path) && !std::experimental::filesystem::is_directory(path))
+	if (!std::filesystem::exists(path) && !std::filesystem::is_directory(path))
 	{
 		MessageBox(GlobalHWND, L"Invalid path!", TOOL_NAME, MB_ICONINFORMATION);
 		return false;
 	}
-	std::experimental::filesystem::current_path(path);
+	std::filesystem::current_path(path);
 	Log::Message(L"INFO: %s | %s %s\n", L"ValidatePath", L"Attempting to validate path:", path.c_str());
 	// check one: manhunt.exe
 
-	if (!std::experimental::filesystem::exists(L"manhunt.exe"))
+	if (!std::filesystem::exists(L"manhunt.exe"))
 	{
 		MessageBox(GlobalHWND, L"Could not find manhunt.exe in this directory.", TOOL_NAME, MB_ICONINFORMATION);
 		return false;
@@ -87,17 +87,17 @@ bool ValidatePath(std::wstring path)
 
 
 	// check two: write permission
+	// should improve one day
 	std::wofstream oFile(L"acfgzx@4@@5l.4ia", std::ofstream::binary);
 	if (!oFile.good())
 	{
-		
 		MessageBox(GlobalHWND, L"You do not have permission to write in this directory, try running as admin.", TOOL_NAME, MB_ICONINFORMATION);
 		return false;
 	}
 
 
 	oFile.close();
-	std::experimental::filesystem::remove(L"acfgzx@4@@5l.4ia");
+	std::filesystem::remove(L"acfgzx@4@@5l.4ia");
 	return true;
 }
 

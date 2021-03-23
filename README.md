@@ -12,7 +12,7 @@ Solved issues:
 
 Fixer requires internet connection for automatic operation (downloading files).
 
-You can install extra things like PluginMH or Widescreen Frontend textures.
+You can install extra things like PluginMH, Widescreen Frontend textures or other fixes.
 
 Additionally, widescreen support is improved by integrating Widescreen Fix.
 
@@ -28,3 +28,6 @@ Credits:
 **ermaccer**
 
 **ThirteenAG** - widescreen fix, d3d8 wrapper
+
+https://github.com/sebastiandev/zipper
+
