@@ -37,10 +37,14 @@ std::wstring strCheckFiles[] = {
 	L"dinput8.dll",
 	L"ddraw.dll",
 	L"scripts\\AudioFix.asi",
+	L"scripts\\HalosFix.asi",
+	L"scripts\\DiscordPlugin.asi",
 	// in case they are in root
 	L"AudioFix.asi",
 	L"Manhunt.WidescreenFix.asi",
 	L"Manhunt.WidescreenFix.ini",
+	L"HalosFix.asi",
+	L"DiscordPlugin.asi",
 	// backups
 	// blood fix 
 	L"pictures\\frontend_pc.txd.bak",
@@ -48,6 +52,8 @@ std::wstring strCheckFiles[] = {
 	L"levels\\global\\charpak\\cash_pc.bak"
 	// models fix
 	L"levels\\global\\pak\\gmodelspc.bak"
+	// halos fix
+	L"pictures\\halofix.txd",
 };
 
 
@@ -218,6 +224,16 @@ bool TaskManager::TaskUnzipDownloadedFiles()
 	}
 	
 
+	// move halosfix
+	if (std::filesystem::exists("HalosFix.asi"))
+	{
+		std::filesystem::rename("HalosFix.asi", "scripts\\HalosFix.asi");
+	}
+	// move discord plugin
+	if (std::filesystem::exists("DiscordPlugin.asi"))
+	{
+		std::filesystem::rename("DiscordPlugin.asi", "scripts\\DiscordPlugin.asi");
+	}
 	// move wide screen textures
 	if (std::filesystem::exists("Manhunt.WidescreenFrontend"))
 	{

@@ -22,9 +22,12 @@
 #define TASK_INFO                       1007
 #define ENH_WSTEXT                      1008
 #define ENH_PMH                         1009
-#define ENH_BLDFIX	                    1010
+#define ENH_BLDFIX                      1010
 #define ENH_PS2CASH                     1011
-#define ENH_MDLFIX	                    1012
+#define ENH_MDLFIX                      1012
+#define ENH_PS2HALOS                    1013
+#define ENH_PS2HALOS2                   1014
+#define ENH_DISCORD                     1014
 #define ID_FILE_LOG                     32771
 #define IDC_STATIC                      -1
 

@@ -96,6 +96,8 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		CreateTooltip(GetDlgItem(hDlg, ENH_BLDFIX), L"Replaces wrong player blood/damage textures with fixed ones so the effect looks like on PS2. (File - frontend_pc.txd)");
 		CreateTooltip(GetDlgItem(hDlg, ENH_PS2CASH), L"PS2 texture for player model. (File - cash_pc.txd)");
 		CreateTooltip(GetDlgItem(hDlg, ENH_MDLFIX), L"Fixes missing texture on rats & crows (File - gmodelspc.dff)");
+		CreateTooltip(GetDlgItem(hDlg, ENH_PS2HALOS), L"Makes halos look like on PS2. 3D sphere is placed on any pickup.");
+		CreateTooltip(GetDlgItem(hDlg, ENH_DISCORD), L"Shows your current level, kills & executions in Discord.");
         return (INT_PTR)TRUE;
 
 	case WM_CLOSE:
@@ -164,6 +166,12 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 					if (IsDlgButtonChecked(hDlg, ENH_PMH))
 						TaskManager::AddDownload(L"https://github.com/ermaccer/Manhunt.PluginMH/releases/latest/download/PluginMH.zip", L"PluginMH.zip");
+
+					if (IsDlgButtonChecked(hDlg, ENH_PS2HALOS))
+						TaskManager::AddDownload(L"https://github.com/ermaccer/Manhunt.HalosFix/releases/latest/download/HalosFix.zip", L"HalosFix.zip");
+
+					if (IsDlgButtonChecked(hDlg, ENH_DISCORD))
+						TaskManager::AddDownload(L"https://github.com/ermaccer/Manhunt.DiscordPlugin/releases/latest/download/DiscordPlugin.zip", L"DiscordPlugin.zip");
 
 					if (TaskManager::TaskDownloadRequiredFiles())
 					if (TaskManager::TaskPossiblyDeleteExistingFiles())
