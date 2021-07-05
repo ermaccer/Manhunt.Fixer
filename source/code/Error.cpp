@@ -22,7 +22,6 @@ void PushErrorMessage(eErrorType type)
 	if (MessageBox(GlobalHWND, message, TOOL_NAME, dwWarning | MB_YESNO) == IDYES)
 	{
 		Log::ShowLog();
-		//MessageBox(0, L"Viewing log...", 0, 0);
 	}
 
 }

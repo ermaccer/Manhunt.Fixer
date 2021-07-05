@@ -43,8 +43,12 @@ std::wstring strCheckFiles[] = {
 	L"AudioFix.asi",
 	L"Manhunt.WidescreenFix.asi",
 	L"Manhunt.WidescreenFix.ini",
-	L"HalosFix.asi",
+	L"HalosFix.asi", // no longer needed, but remove because of incompatibilty with mhp (both doing same thing)
 	L"DiscordPlugin.asi",
+	L"MHP.ini",
+	L"MHP.asi",
+	L"scripts\\MHP.ini",
+	L"scripts\\MHP.asi",
 	// backups
 	// blood fix 
 	L"pictures\\frontend_pc.txd.bak",
@@ -150,20 +154,31 @@ bool TaskManager::TaskUnzipDownloadedFiles()
 	bool bResult = true;
 	for (int i = 0; i < vDownloads.size(); i++)
 	{
-		std::wstring file = vDownloads[i].name;
-		std::string tmp("", file.length());
-		std::copy(file.begin(), file.end(), tmp.begin());
-		Unzipper zip(tmp);
-		bResult = zip.extract("..");
-		if (!bResult)
+		if (std::filesystem::exists(vDownloads[i].name))
+		{
+			std::wstring file = vDownloads[i].name;
+			std::string tmp("", file.length());
+			std::copy(file.begin(), file.end(), tmp.begin());
+			Unzipper zip(tmp);
+			bResult = zip.extract("..");
+			if (!bResult)
+				break;
+			if (bResult)
+				zip.close();
+
+			_wremove(vDownloads[i].name.c_str());
+
+
+			Log::Message(L"INFO: %s | %s %s\n", L"TaskUnzipDownloadedFiles", L"Decompressing: ", vDownloads[i].name.c_str());
+		}
+		else
+		{
+			bResult = false;
+			Log::Message(L"INFO: %s | %s %s\n", L"TaskUnzipDownloadedFiles", L"Failed to decompress: ", vDownloads[i].name.c_str());
 			break;
-		if (bResult)
-			zip.close();
-
-		_wremove(vDownloads[i].name.c_str());
+		}
 
 
-		Log::Message(L"INFO: %s | %s %s\n", L"TaskUnzipDownloadedFiles", L"Decompressing: ", vDownloads[i].name.c_str());
 	}
 
 
@@ -182,6 +197,16 @@ bool TaskManager::TaskUnzipDownloadedFiles()
 		std::filesystem::rename("AudioFix.asi", "scripts\\AudioFix.asi");
 	}
 
+
+	// move mhp
+	if (std::filesystem::exists("MHP.asi"))
+	{
+		std::filesystem::rename("MHP.asi", "scripts\\MHP.asi");
+	}
+	if (std::filesystem::exists("MHP.ini"))
+	{
+		std::filesystem::rename("MHP.ini", "scripts\\MHP.ini");
+	}
 
 	// rename asi loader
 	if (std::filesystem::exists("dinput8.dll"))
@@ -223,12 +248,6 @@ bool TaskManager::TaskUnzipDownloadedFiles()
 		std::filesystem::rename("gmodels_fix.dff", "levels\\global\\pak\\gmodelspc.dff");
 	}
 	
-
-	// move halosfix
-	if (std::filesystem::exists("HalosFix.asi"))
-	{
-		std::filesystem::rename("HalosFix.asi", "scripts\\HalosFix.asi");
-	}
 	// move discord plugin
 	if (std::filesystem::exists("DiscordPlugin.asi"))
 	{

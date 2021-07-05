@@ -45,8 +45,6 @@ void Log::Message(const wchar_t * fmt, ...)
 	LogFile = _wfopen(strLogPath.c_str(), L"a+");
 	fwprintf(LogFile, L"%s", log_buff);
 	fclose(LogFile);
-    //printf(log_buff);
-
 }
 
 void Log::ShowLog()

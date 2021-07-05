@@ -8,8 +8,8 @@ std::wstring strFileToDownload;
 STDMETHODIMP_(HRESULT __stdcall) DLCallback::OnProgress(ULONG ulProgress, ULONG ulProgressMax, ULONG ulStatusCode, LPCWSTR wszStatusText)
 {
 	wchar_t szProgressReport[512] = {};
+
 	wsprintf((LPWSTR)&szProgressReport, L"Downloading: %s %d KB/%d KB", strFileToDownload.c_str(), ulProgress / 1024, ulProgressMax / 1024);
-//	std::wstring str((LPWSTR)&szProgressReport, wcslen(szProgressReport));
 	TaskManager::TaskSetName(szProgressReport);
 	return S_OK;
 

@@ -24,6 +24,8 @@
 #define ENH_PMH                         1009
 #define ENH_BLDFIX                      1010
 #define ENH_PS2CASH                     1011
+#define IDC_EDIT1                       1011
+#define CREDITS_BOX                     1011
 #define ENH_MDLFIX                      1012
 #define ENH_PS2HALOS                    1013
 #define ENH_PS2HALOS2                   1014
@@ -38,7 +40,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         32772
-#define _APS_NEXT_CONTROL_VALUE         1011
+#define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif
