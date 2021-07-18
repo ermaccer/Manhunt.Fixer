@@ -247,6 +247,16 @@ bool TaskManager::TaskUnzipDownloadedFiles()
 		}
 		std::filesystem::rename("gmodels_fix.dff", "levels\\global\\pak\\gmodelspc.dff");
 	}
+
+	if (std::filesystem::exists("gmodels_fix.txd"))
+	{
+		if (std::filesystem::exists("levels\\global\\pak\\gmodelspc.txd"))
+		{
+			std::filesystem::rename("levels\\global\\pak\\gmodelspc.txd", "levels\\global\\pak\\gmodelspc.txd.bak");
+			Log::Message(L"INFO: %s | %s %s %s\n", L"TaskUnzipDownloadedFiles", L"A copy of previous gmodelspc.txd has been saved as", L"gmodelspc.txd.bak", L"You may remove it on your own");
+		}
+		std::filesystem::rename("gmodels_fix.txd", "levels\\global\\pak\\gmodelspc.txd");
+	}
 	
 	// move discord plugin
 	if (std::filesystem::exists("DiscordPlugin.asi"))
