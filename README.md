@@ -1,33 +1,43 @@
-# Manhunt Fixer
-
+﻿# Manhunt Fixer
 Manhunt Fixer is an automated GUI tool designed to solve various issues present in Manhunt.
 
-It works with any game version, retail and steam.
-
-Solved issues:
-- Executable not launching
-- Various AI errors and scripts not executing properly (locked gates, wrong enemy behaviour), achieved by limiting framerate to 60FPS
-- Fixes end level crashes
-- Fixes audio and music loops
-
-Fixer requires internet connection for automatic operation (downloading files).
-
-You can install extra things like PluginMH, Widescreen Frontend textures or other fixes.
-
-Additionally, widescreen support is improved by integrating Widescreen Fix.
-
-Please visit Steam guide for information, FAQs, discussions and manual way:
-https://steamcommunity.com/sharedfiles/filedetails/?id=2166039806
+Any game version is supported, Fixer was officialy tested with [Steam](https://store.steampowered.com/app/12130/Manhunt/) and retail version.
 
 
 
+| Core Issue | |
+|---|---|
+|Executable not launching.|✅ |
+|Born Again completion crash.|✅ |
+|Sounds and Music looping.|✅ |
+|Enemy AI bugging out.|✅|
+
+## Enhancements
+Manhunt Fixer comes with a variety of addons to choose from, ranging from modifications to
+other fixes.
+
+| Addon | Description | Links |
+|---|---|---| 
+|PluginMH|A big plugin for Manhunt, allows to access debug menu, adds a ton of new features and more! | [PluginMH](https://github.com/ermaccer/Manhunt.PluginMH)|
+|MHP|Changes Manhunt's renderer to improve game graphics.| [MHP](https://github.com/Fire-Head/MHP) [Video Presentation](https://www.youtube.com/watch?v=C8XR1K14h8A)|
+|Discord Plugin|Displays Manhunt data in Discord's Rich Presence feature.| [Discord Plugin](https://github.com/ermaccer/Manhunt.DiscordPlugin/)|
+|Fixed Player Blood Textures|Fixes invalid textures for player blood visuals.| [Video Presentation](https://youtu.be/5Kb21bhe2LE)|
+|Fixed Global Models|Fixes various errors in models (such as rats being pitch black).| [Preview](https://steamuserimages-a.akamaihd.net/ugc/1742303942007772598/802EDB8890ECBDB0A63B819565C55F8CBFBB5550/)|
+|Widescreen Frontend Textures|Replaces menu textures with rescaled ones.| [Preview](https://steamuserimages-a.akamaihd.net/ugc/1742303942007751222/80DE75C48B74C6774A0A249C81DF1BF4CBCF768F/)|
 
 
-Credits:
+##### Please visit  [Steam community guide](https://steamcommunity.com/sharedfiles/filedetails/?id=2166039806) for information, FAQs, discussions and manual instruction
+
+
+## Credits
 
 **ermaccer**
 
-**ThirteenAG** - widescreen fix, d3d8 wrapper
+[Fire_Head](https://github.com/Fire-Head/)
+
+[ThirteenAG](https://github.com/ThirteenAG)
 
 https://github.com/sebastiandev/zipper
 
+
+A list of testers can be found in About section of Fixer.
