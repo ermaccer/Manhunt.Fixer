@@ -72,7 +72,7 @@ bool ValidatePath(std::wstring path)
 {
 	if (!std::filesystem::exists(path) && !std::filesystem::is_directory(path))
 	{
-		MessageBox(GlobalHWND, L"Invalid path!", TOOL_NAME, MB_ICONINFORMATION);
+		MessageBox(gHWND, L"Invalid path!", TOOL_NAME, MB_ICONINFORMATION);
 		return false;
 	}
 	std::filesystem::current_path(path);
@@ -81,7 +81,7 @@ bool ValidatePath(std::wstring path)
 
 	if (!std::filesystem::exists(L"manhunt.exe"))
 	{
-		MessageBox(GlobalHWND, L"Could not find manhunt.exe in this directory.", TOOL_NAME, MB_ICONINFORMATION);
+		MessageBox(gHWND, L"Could not find manhunt.exe in this directory.", TOOL_NAME, MB_ICONINFORMATION);
 		return false;
 	}
 
@@ -91,7 +91,7 @@ bool ValidatePath(std::wstring path)
 	std::wofstream oFile(L"acfgzx@4@@5l.4ia", std::ofstream::binary);
 	if (!oFile.good())
 	{
-		MessageBox(GlobalHWND, L"You do not have permission to write in this directory, try running as admin.", TOOL_NAME, MB_ICONINFORMATION);
+		MessageBox(gHWND, L"You do not have permission to write in this directory, try running as an admin.", TOOL_NAME, MB_ICONINFORMATION);
 		return false;
 	}
 

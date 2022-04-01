@@ -1,0 +1,68 @@
+Manhunt Fixer Logging Started - Fri Apr  1 19:31:25 2022
+
+INFO: Steam path: c:/program files (x86)/steam
+INFO: Working path: c:\program files (x86)\steam\steamapps
+INFO: ProcessLibraryFolders | Found game folders: 
+INFO: c:/program files (x86)/steam 
+INFO: E:\Steam 
+INFO: H:\Steam 
+INFO: Z:\Steam 
+INFO: S:\Steam 
+INFO: D:\Steam 
+INFO: FindManhuntManifest | Scanning:  c:\program files (x86)\steam\steamapps
+INFO: FindManhuntManifest | Scanning:  H:\Steam\steamapps
+INFO: FindManhuntManifest | Scanning:  Z:\Steam\steamapps
+INFO: FindManhuntManifest | Scanning:  S:\Steam\steamapps
+INFO: FindManhuntManifest | Scanning:  D:\Steam\steamapps
+INFO: FindManhuntManifest | Manhunt location:   D:\Steam\steamapps\common\Manhunt 
+INFO: ValidatePath | Attempting to validate path: C:\Users\ermaccer\Desktop\Manhunt
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\TRAIN\TRAIN1.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\TRAIN\TRAIN2.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\TRAIN\TRAIN3.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\PIGGRILL\PIGGRIL1.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\PIGGRILL\PIGGRIL2.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\CRAPPER\CRAPPER.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\GASPOUR\GASPOUR.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\JOURNO\JOURNO.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\PORN\PORN.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\DIRECT\DIRECT.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\DDEATH\DDEATH.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\DDOOR\DDOOR.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\PDOOR\PDOOR.RIB
+INFO: VerifyManhuntGameData | File found: AUDIO\PC\SCRIPTED\MALLTV\MALLTV.RIB
+INFO: RequestDownloadFile | Attempting to download: https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/manhunt/Manhunt.WidescreenFix.zip
+INFO: RequestDownloadFile | File downloaded: Manhunt.WidescreenFix.zip
+INFO: RequestDownloadFile | Attempting to download: https://github.com/ThirteenAG/d3d8-wrapper/releases/latest/download/d3d8.zip
+INFO: RequestDownloadFile | File downloaded: d3d8.zip
+INFO: RequestDownloadFile | Attempting to download: https://github.com/ermaccer/Manhunt.AudioFix/releases/latest/download/AudioFix.zip
+INFO: RequestDownloadFile | File downloaded: AudioFix.zip
+INFO: RequestDownloadFile | Attempting to download: https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/manhunt/Manhunt.WidescreenFrontend.zip
+INFO: RequestDownloadFile | File downloaded: Manhunt.WidescreenFrontend.zip
+INFO: RequestDownloadFile | Attempting to download: https://github.com/ermaccer/Manhunt.Fixer/raw/master/bloodfix.zip
+INFO: RequestDownloadFile | File downloaded: bloodfix.zip
+INFO: RequestDownloadFile | Attempting to download: https://github.com/ermaccer/Manhunt.Fixer/raw/master/ps2cash.zip
+INFO: RequestDownloadFile | File downloaded: ps2cash.zip
+INFO: RequestDownloadFile | Attempting to download: https://github.com/ermaccer/Manhunt.Fixer/raw/master/gmodels_fix.zip
+INFO: RequestDownloadFile | File downloaded: gmodels_fix.zip
+INFO: RequestDownloadFile | Attempting to download: https://github.com/ermaccer/Manhunt.PluginMH/releases/latest/download/PluginMH.zip
+INFO: RequestDownloadFile | File downloaded: PluginMH.zip
+INFO: RequestDownloadFile | Attempting to download: https://github.com/Fire-Head/MHP/releases/latest/download/MHP.zip
+INFO: RequestDownloadFile | File downloaded: MHP.zip
+INFO: RequestDownloadFile | Attempting to download: https://github.com/ermaccer/Manhunt.DiscordPlugin/releases/latest/download/DiscordPlugin.zip
+INFO: RequestDownloadFile | File downloaded: DiscordPlugin.zip
+INFO: TaskUnzipDownloadedFiles | Decompressing:  Manhunt.WidescreenFix.zip
+INFO: TaskUnzipDownloadedFiles | Decompressing:  d3d8.zip
+INFO: TaskUnzipDownloadedFiles | Decompressing:  AudioFix.zip
+INFO: TaskUnzipDownloadedFiles | Decompressing:  Manhunt.WidescreenFrontend.zip
+INFO: TaskUnzipDownloadedFiles | Decompressing:  bloodfix.zip
+INFO: TaskUnzipDownloadedFiles | Decompressing:  ps2cash.zip
+INFO: TaskUnzipDownloadedFiles | Decompressing:  gmodels_fix.zip
+INFO: TaskUnzipDownloadedFiles | Decompressing:  PluginMH.zip
+INFO: TaskUnzipDownloadedFiles | Decompressing:  MHP.zip
+INFO: TaskUnzipDownloadedFiles | Decompressing:  DiscordPlugin.zip
+INFO: TaskUnzipDownloadedFiles | A copy of previous frontend_pc.txd has been saved as frontend_pc.txd.bak You may remove it on your own
+INFO: TaskUnzipDownloadedFiles | A copy of previous cash_pc.txd has been saved as cash_pc.bak You may remove it on your own
+INFO: TaskUnzipDownloadedFiles | A copy of previous gmodelspc.dff has been saved as gmodelspc.bak You may remove it on your own
+INFO: TaskUnzipDownloadedFiles | A copy of previous gmodelspc.txd has been saved as gmodelspc.txd.bak You may remove it on your own
+INFO: TaskPatchExecutable | A copy of previous executable has been saved as manhunt.exe.backup You may remove it on your own
+INFO: TaskApply60FPSLimit | Configuration set

@@ -5,6 +5,7 @@
 #include <vector>
 #include <filesystem>
 #include <fstream>
+#include <Shlwapi.h>
 
 #include "vdf_parser.hpp"
 
@@ -46,13 +47,13 @@ void ProcessLibraryFolders()
 	wchar_t buffer[MAX_PATH] = {};
 	std::wstring strSteamPath = FindSteamDirectory();
 
-	std::filesystem::current_path(strSteamPath);
+	SetCurrentDirectory(strSteamPath.c_str());
 
 	std::wstring strSteamApps = L"steamapps";
 
-	if (std::filesystem::exists(strSteamApps))
+	if (PathIsDirectory(strSteamApps.c_str()))
 	{
-		std::filesystem::current_path(strSteamApps);
+		SetCurrentDirectory(strSteamApps.c_str());
 
 		Log::Message(L"INFO: Working path: %s\n", std::filesystem::current_path().c_str());
 
@@ -64,12 +65,20 @@ void ProcessLibraryFolders()
 
 			vLibraryPaths.push_back(strSteamPath);
 
-			for (int i = 1; i < root.attribs.size() - 1; i++)
+			// old steam
+			for (unsigned int i = 1; i < root.attribs.size() - 1; i++)
 				vLibraryPaths.push_back(root.attribs[std::to_wstring(i)]);
-	
-			Log::Message(L"INFO: %s | %s \n", L"ProcessLibraryFolders", L"Found game folders:");
 
-			for (int i = 0; i < vLibraryPaths.size(); i++)
+
+			// new steam
+			for (unsigned int i = 1; i < root.childs.size(); i++)
+			{
+				std::wstring path = root.childs.at(std::to_wstring(i))->attribs[L"path"].c_str();
+				vLibraryPaths.push_back(path);					
+			}
+
+			Log::Message(L"INFO: %s | %s \n", L"ProcessLibraryFolders", L"Found game folders:");
+			for (unsigned int i = 0; i < vLibraryPaths.size(); i++)
 				Log::Message(L"INFO: %s \n", vLibraryPaths[i].c_str());
 		}
 		else
@@ -98,55 +107,62 @@ void FindManhuntManifest()
 	{
 		std::wstring strRequiredACF = L"appmanifest_" + std::to_wstring(MANHUNT_STEAM_ID) + L".acf";
 
-		for (int i = 0; i < vLibraryPaths.size(); i++)
+		for (unsigned int i = 0; i < vLibraryPaths.size(); i++)
 		{
 
 			if (bIsManhuntPathAvailable)
 				break;
 
-			std::filesystem::current_path(vLibraryPaths[i]);
-			std::filesystem::current_path(L"steamapps");
-
-			std::wstring strCommon = L"common";
-
-			if (std::filesystem::exists(strCommon))
+			if (PathIsDirectory(vLibraryPaths[i].c_str()))
 			{
-				Log::Message(L"INFO: %s | %s %s\n", L"FindManhuntManifest", L"Scanning: ", std::filesystem::current_path().wstring().c_str());
+				SetCurrentDirectory(vLibraryPaths[i].c_str());
+				SetCurrentDirectory(L"steamapps");
 
-				for (const auto & file : std::filesystem::directory_iterator(std::filesystem::current_path()))
+				std::wstring strCommon = L"common";
+
+				if (PathIsDirectory(strCommon.c_str()))
 				{
-					if (!std::filesystem::is_directory(file.path().wstring()) && !bIsManhuntPathAvailable)
+					Log::Message(L"INFO: %s | %s %s\n", L"FindManhuntManifest", L"Scanning: ", std::filesystem::current_path().wstring().c_str());
+
+					for (const auto & file : std::filesystem::directory_iterator(std::filesystem::current_path()))
 					{
-						if (file.path().extension().wstring() == L".acf")
+						if (!PathIsDirectory(file.path().wstring().c_str()) && !bIsManhuntPathAvailable)
 						{
-							std::wstring str = file.path().wstring();
-							int fnd = str.find_last_of(L"/\\");
-
-							std::wstring strACF = str.substr(fnd + 1);
-
-
-							if (wcscmp(strACF.c_str(),strRequiredACF.c_str())  == 0)
+							if (file.path().extension().wstring() == L".acf")
 							{
-								std::wifstream pACF(file.path().wstring());
-								auto root = tyti::vdf::read(pACF);
-								std::wstring installpath = root.attribs[L"installdir"];
-								strManhuntPath = std::filesystem::current_path().wstring() + L"\\" +strCommon + L"\\" + installpath;
-								Log::Message(L"INFO: %s | %s %s \n", L"FindManhuntManifest", L"Manhunt location:  ", strManhuntPath.c_str());
-								bIsManhuntPathAvailable = true;
-								break;
-							}
+								std::wstring str = file.path().wstring();
+								int fnd = str.find_last_of(L"/\\");
 
+								std::wstring strACF = str.substr(fnd + 1);
+
+
+								if (wcscmp(strACF.c_str(), strRequiredACF.c_str()) == 0)
+								{
+									std::wifstream pACF(file.path().wstring());
+									auto root = tyti::vdf::read(pACF);
+									std::wstring installpath = root.attribs[L"installdir"];
+									strManhuntPath = std::filesystem::current_path().wstring() + L"\\" + strCommon + L"\\" + installpath;
+									Log::Message(L"INFO: %s | %s %s \n", L"FindManhuntManifest", L"Manhunt location:  ", strManhuntPath.c_str());
+									bIsManhuntPathAvailable = true;
+									break;
+								}
+
+							}
 						}
 					}
-				}
 
+				}
+				else
+				{
+					Log::Message(L"ERROR: %s | %s (%d)\n", L"FindManhuntManifest", L"Common folder missing/error: ", GetLastError());
+					PushErrorMessage();
+					break;
+				}
 			}
 			else
-			{
-				Log::Message(L"ERROR: %s | %s (%d)\n", L"FindManhuntManifest", L"Common folder missing/error: ", GetLastError());
-				PushErrorMessage();
-				break;
-			}
+				continue;
+
+			
 		}
 		if (!bIsManhuntPathAvailable)
 		{
@@ -168,6 +184,6 @@ std::wstring GetFinalSteamManhuntPath()
 void SteamCleanup()
 {
 	vLibraryPaths.clear();
-	strManhuntPath = std::wstring();
+	strManhuntPath.clear();
 	bIsManhuntPathAvailable = false;
 }

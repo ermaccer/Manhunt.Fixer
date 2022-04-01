@@ -14,7 +14,10 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Header Files\code">
-      <UniqueIdentifier>{98cb7505-0a4c-41f7-934e-dbf88748a0fa}</UniqueIdentifier>
+      <UniqueIdentifier>{0732874d-24ae-4a82-9933-1b5a999bf33e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code">
+      <UniqueIdentifier>{851fa711-17e4-44ca-aac9-27deb56fed58}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -27,68 +30,62 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Fixer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\SteamDirectory.h">
+    <ClInclude Include="code\Common.h">
       <Filter>Header Files\code</Filter>
     </ClInclude>
     <ClInclude Include="code\Error.h">
       <Filter>Header Files\code</Filter>
     </ClInclude>
-    <ClInclude Include="code\Log.h">
-      <Filter>Header Files\code</Filter>
-    </ClInclude>
-    <ClInclude Include="code\vdf_parser.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Common.h">
-      <Filter>Header Files\code</Filter>
-    </ClInclude>
-    <ClInclude Include="code\TaskManager.h">
+    <ClInclude Include="code\FileDownload.h">
       <Filter>Header Files\code</Filter>
     </ClInclude>
     <ClInclude Include="code\GameData.h">
       <Filter>Header Files\code</Filter>
     </ClInclude>
-    <ClInclude Include="code\FileDownload.h">
+    <ClInclude Include="code\Log.h">
       <Filter>Header Files\code</Filter>
     </ClInclude>
-    <ClInclude Include="zipper.h">
+    <ClInclude Include="code\SteamDirectory.h">
+      <Filter>Header Files\code</Filter>
+    </ClInclude>
+    <ClInclude Include="code\TaskManager.h">
+      <Filter>Header Files\code</Filter>
+    </ClInclude>
+    <ClInclude Include="code\vdf_parser.hpp">
+      <Filter>Header Files\code</Filter>
+    </ClInclude>
+    <ClInclude Include="Fixer.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="unzipper.h">
-      <Filter>Header Files\code</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code\Common.cpp">
+      <Filter>Source Files\code</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Error.cpp">
+      <Filter>Source Files\code</Filter>
+    </ClCompile>
+    <ClCompile Include="code\FileDownload.cpp">
+      <Filter>Source Files\code</Filter>
+    </ClCompile>
+    <ClCompile Include="code\GameData.cpp">
+      <Filter>Source Files\code</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Log.cpp">
+      <Filter>Source Files\code</Filter>
+    </ClCompile>
+    <ClCompile Include="code\SteamDirectory.cpp">
+      <Filter>Source Files\code</Filter>
+    </ClCompile>
+    <ClCompile Include="code\TaskManager.cpp">
+      <Filter>Source Files\code</Filter>
+    </ClCompile>
     <ClCompile Include="Fixer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\SteamDirectory.cpp">
-      <Filter>Header Files\code</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Log.cpp">
-      <Filter>Header Files\code</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Error.cpp">
-      <Filter>Header Files\code</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Common.cpp">
-      <Filter>Header Files\code</Filter>
-    </ClCompile>
-    <ClCompile Include="code\GameData.cpp">
-      <Filter>Header Files\code</Filter>
-    </ClCompile>
-    <ClCompile Include="code\TaskManager.cpp">
-      <Filter>Header Files\code</Filter>
-    </ClCompile>
-    <ClCompile Include="code\FileDownload.cpp">
-      <Filter>Header Files\code</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Fixer.rc">
+    <ResourceCompile Include="Manhunt.Fixer.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
@@ -96,7 +93,7 @@
     <Image Include="small.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Fixer.ico">
+    <Image Include="Manhunt.Fixer.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -7,7 +7,7 @@ std::wstring strFileToDownload;
 
 STDMETHODIMP_(HRESULT __stdcall) DLCallback::OnProgress(ULONG ulProgress, ULONG ulProgressMax, ULONG ulStatusCode, LPCWSTR wszStatusText)
 {
-	wchar_t szProgressReport[512] = {};
+	static wchar_t szProgressReport[512] = {};
 
 	wsprintf((LPWSTR)&szProgressReport, L"Downloading: %s %d KB/%d KB", strFileToDownload.c_str(), ulProgress / 1024, ulProgressMax / 1024);
 	TaskManager::TaskSetName(szProgressReport);
@@ -67,8 +67,6 @@ STDMETHODIMP_(HRESULT __stdcall) DLCallback::QueryInterface(REFIID riid, void **
 
 bool RequestDownloadFile(std::wstring url, std::wstring saveAs)
 {
-
-
 	strFileToDownload = saveAs;
 	DLCallback callback;
 	Log::Message(L"INFO: %s | %s %s\n", L"RequestDownloadFile", L"Attempting to download:", url.c_str());

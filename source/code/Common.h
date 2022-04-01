@@ -11,4 +11,4 @@ std::wstring   SetFolderFromButton(HWND hWnd);
 bool           ValidatePath(std::wstring path);
 
 
-extern HWND GlobalHWND;
+extern HWND gHWND;

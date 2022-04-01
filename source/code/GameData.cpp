@@ -39,7 +39,7 @@ bool VerifyManhuntGameData()
 	{
 		if (std::filesystem::exists(strBadFilesToCheck[i]))
 		{
-			if (MessageBox(GlobalHWND, L"One or more changes featured in some other fix have been found in your Manhunt directory. "
+			if (MessageBox(gHWND, L"One or more changes featured in other fix have been found in your Manhunt directory. "
 				"Please remove added files them or rename files back to original filename. Revert your NVIDIA Control Panel settings, if you have made any changes."
 				" \n\n"
 				"Use this tool on a clean game installation.\n"

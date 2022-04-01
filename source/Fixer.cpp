@@ -1,13 +1,12 @@
-// Fixer.cpp : Defines the entry point for the application.
+// Manhunt.Fixer.cpp : Defines the entry point for the application.
 //
-
-
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #pragma comment(lib,"zipper.lib")
 #pragma comment(lib,"zlibstat.lib")
+
 #include "framework.h"
 #include "Fixer.h"
 #include <string>
@@ -22,30 +21,23 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 
 HINSTANCE gInstance;
-
+HWND hInputPath = 0;
+HWND hBar = 0;
+HWND hCurrentTask = 0;
+HWND gHWND = 0;
 
 INT_PTR CALLBACK    DlgProc(HWND, UINT, WPARAM, LPARAM);
-
 INT_PTR CALLBACK    AboutBox(HWND, UINT, WPARAM, LPARAM);
 
 
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,  int nCmdShow)
 {
 	gInstance = hInstance;
 	DialogBox(gInstance, MAKEINTRESOURCE(IDD_DIALOG1), 0, DlgProc);
 
-
 }
 
-
-HWND hInputPath = 0;
-HWND hBar = 0;
-HWND hCurrentTask = 0;
-HWND GlobalHWND = 0;
 
 void CreateTooltip(HWND hParent, LPCWSTR Text)
 {
@@ -58,7 +50,7 @@ void CreateTooltip(HWND hParent, LPCWSTR Text)
 	TOOLINFO ti;
 	ti.cbSize = sizeof(TOOLINFO);
 	ti.uFlags = TTF_SUBCLASS | TTF_IDISHWND;
-	ti.hwnd = GlobalHWND;
+	ti.hwnd = gHWND;
 	ti.hinst = NULL;
 	ti.uId = (UINT_PTR)hParent;
 	ti.lpszText = (LPWSTR)Text;
@@ -72,18 +64,18 @@ void CreateTooltip(HWND hParent, LPCWSTR Text)
 	ti.rect.bottom = rect.bottom;
 
 	SendMessage(hwndTT, TTM_ADDTOOL, 0, (LPARAM)&ti);
-} 
+}
 
 
 
 INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	GlobalHWND = hDlg;
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-    case WM_INITDIALOG:
-	
+	gHWND = hDlg;
+	UNREFERENCED_PARAMETER(lParam);
+	switch (message)
+	{
+	case WM_INITDIALOG:
+
 		Log::Clear();
 		Log::Init();
 		hInputPath = GetDlgItem(hDlg, MANHUNT_PATH);
@@ -98,7 +90,7 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		CreateTooltip(GetDlgItem(hDlg, ENH_MDLFIX), L"Fixes missing texture on rats & crows (File - gmodelspc.dff)");
 		CreateTooltip(GetDlgItem(hDlg, ENH_PS2HALOS), L"Improves game renderer by making it work like PS2 version, also includes PS2 halos");
 		CreateTooltip(GetDlgItem(hDlg, ENH_DISCORD), L"Shows your current level, kills & executions in Discord.");
-        return (INT_PTR)TRUE;
+		return (INT_PTR)TRUE;
 
 	case WM_CLOSE:
 		EndDialog(hDlg, LOWORD(wParam));
@@ -106,7 +98,7 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-    case WM_COMMAND:
+	case WM_COMMAND:
 		if (wParam == LOCATE_STEAM)
 		{
 			ProcessLibraryFolders();
@@ -136,7 +128,7 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 			hInputPath = GetDlgItem(hDlg, MANHUNT_PATH);
 			if (GetWindowTextLength(hInputPath) == 0)
 			{
-				MessageBox(GlobalHWND, L"Specify Manhunt path!", TOOL_NAME, MB_ICONWARNING);
+				MessageBox(gHWND, L"Specify Manhunt path!", TOOL_NAME, MB_ICONWARNING);
 				break;
 			}
 			wchar_t szInPath[MAX_PATH] = {};
@@ -170,31 +162,31 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 						TaskManager::AddDownload(L"https://github.com/ermaccer/Manhunt.DiscordPlugin/releases/latest/download/DiscordPlugin.zip", L"DiscordPlugin.zip");
 
 					if (TaskManager::TaskDownloadRequiredFiles())
-					if (TaskManager::TaskPossiblyDeleteExistingFiles())
-					if (TaskManager::TaskUnzipDownloadedFiles())
-					if (TaskManager::TaskPatchExecutable())
-					if (TaskManager::TaskApply60FPSLimit())
-					{
-						TaskManager::TaskComplete();
-						TaskManager::ClearDownloads();
-						PushErrorMessage(ERROR_COMPLETE);
-						if (IsDlgButtonChecked(hDlg, ENH_PMH))
-							AskForPMHSettings();
-					}
-								
+						if (TaskManager::TaskPossiblyDeleteExistingFiles())
+							if (TaskManager::TaskUnzipDownloadedFiles())
+								if (TaskManager::TaskPatchExecutable())
+									if (TaskManager::TaskApply60FPSLimit())
+									{
+										TaskManager::TaskComplete();
+										TaskManager::ClearDownloads();
+										PushErrorMessage(ERROR_COMPLETE);
+										if (IsDlgButtonChecked(hDlg, ENH_PMH))
+											AskForPMHSettings();
+									}
+
 				}
 			}
 		}
 
 
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        break;
-    }
-    return (INT_PTR)FALSE;
+		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+		{
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
 }
 
 void PushLogMessage(HWND hWnd, std::wstring msg)

@@ -32,6 +32,7 @@
 #include <unordered_set>
 #include <algorithm>
 #include <iterator>
+#include <functional>
 
 #include <system_error>
 #include <exception>
@@ -78,11 +79,11 @@ namespace tyti
             template <typename T>
             struct literal_macro_help
             {
-                static CONSTEXPR const char *result(const char *c, const wchar_t *wc) NOEXCEPT
+                static CONSTEXPR const char *result(const char *c, const wchar_t *) NOEXCEPT
                 {
                     return c;
                 }
-                static CONSTEXPR const char result(const char c, const wchar_t wc) NOEXCEPT
+                static CONSTEXPR const char result(const char c, const wchar_t) NOEXCEPT
                 {
                     return c;
                 }
@@ -91,11 +92,11 @@ namespace tyti
             template <>
             struct literal_macro_help<wchar_t>
             {
-                static CONSTEXPR const wchar_t *result(const char *c, const wchar_t *wc) NOEXCEPT
+                static CONSTEXPR const wchar_t *result(const char *, const wchar_t *wc) NOEXCEPT
                 {
                     return wc;
                 }
-                static CONSTEXPR const wchar_t result(const char c, const wchar_t wc) NOEXCEPT
+                static CONSTEXPR const wchar_t result(const char, const wchar_t wc) NOEXCEPT
                 {
                     return wc;
                 }
@@ -137,7 +138,7 @@ namespace tyti
                 std::basic_string<charT> print() const { return std::basic_string<charT>(t, TYTI_L(charT, '\t')); }
                 inline CONSTEXPR tabs operator+(size_t i) const NOEXCEPT
                 {
-                    return tabs(i + 1);
+                    return tabs(t + i);
                 }
             };
 
@@ -152,11 +153,6 @@ namespace tyti
         ///////////////////////////////////////////////////////////////////////////
         //  Interface
         ///////////////////////////////////////////////////////////////////////////
-
-        //forward decls
-        //forward decl
-        template <typename OutputT, typename iStreamT>
-        OutputT read(iStreamT &inStream);
 
         /// custom objects and their corresponding write functions
 
@@ -212,6 +208,20 @@ namespace tyti
         typedef basic_multikey_object<char> multikey_object;
         typedef basic_multikey_object<wchar_t> wmultikey_object;
 
+        struct Options
+        {
+            bool strip_escape_symbols;
+            bool ignore_all_platform_conditionals;
+            bool ignore_includes;
+
+            Options() : strip_escape_symbols(true), ignore_all_platform_conditionals(false), ignore_includes(false) {}
+        };
+
+        //forward decls
+        //forward decl
+        template <typename OutputT, typename iStreamT>
+        OutputT read(iStreamT &inStream, const Options &opt = Options{});
+
         /** \brief writes given object tree in vdf format to given stream.
         Output is prettyfied, using tabs
         */
@@ -261,7 +271,8 @@ namespace tyti
             */
             template <typename OutputT, typename IterT>
             std::vector<std::unique_ptr<OutputT>> read_internal(IterT first, const IterT last,
-                                                                std::unordered_set<std::basic_string<typename std::iterator_traits<IterT>::value_type>> &exclude_files)
+                                                                std::unordered_set<std::basic_string<typename std::iterator_traits<IterT>::value_type>> &exclude_files,
+                                                                const Options &opt)
             {
                 static_assert(std::is_default_constructible<OutputT>::value,
                               "Output Type must be default constructible (provide constructor without arguments)");
@@ -274,29 +285,34 @@ namespace tyti
                 const std::basic_string<charT> whitespaces = TYTI_L(charT, " \n\v\f\r\t");
 
 #ifdef WIN32
-                auto is_platform_str = [](const std::basic_string<charT> &in) {
+                std::function<bool(const std::basic_string<charT> &)> is_platform_str = [](const std::basic_string<charT> &in) {
                     return in == TYTI_L(charT, "$WIN32") || in == TYTI_L(charT, "$WINDOWS");
-                }
+                };
 #elif __APPLE__
                 // WIN32 stands for pc in general
-                auto is_platform_str = [](const std::basic_string<charT> &in) {
+                std::function<bool(const std::basic_string<charT> &)> is_platform_str = [](const std::basic_string<charT> &in) {
                     return in == TYTI_L(charT, "$WIN32") || in == TYTI_L(charT, "$POSIX") || in == TYTI_L(charT, "$OSX");
                 };
 
 #elif __linux__
                 // WIN32 stands for pc in general
-                auto is_platform_str = [](const std::basic_string<charT> &in) {
+                std::function<bool(const std::basic_string<charT> &)> is_platform_str = [](const std::basic_string<charT> &in) {
                     return in == TYTI_L(charT, "$WIN32") || in == TYTI_L(charT, "$POSIX") || in == TYTI_L(charT, "$LINUX");
                 };
 #else
-                auto is_platform_str = [](const std::basic_string<charT> &in) {
+                std::function<bool(const std::basic_string<charT> &)> is_platform_str = [](const std::basic_string<charT> &in) {
                     return false;
                 };
 #endif
 
+                if (opt.ignore_all_platform_conditionals)
+                    is_platform_str = [](const std::basic_string<charT> &) {
+                        return false;
+                    };
+
                 // function for skipping a comment block
                 // iter: iterator poition to the position after a '/'
-				; auto skip_comments = [&comment_end_str](IterT iter, const IterT &last) -> IterT {
+                auto skip_comments = [&comment_end_str](IterT iter, const IterT &last) -> IterT {
                     ++iter;
                     if (iter != last)
                     {
@@ -362,7 +378,7 @@ namespace tyti
                     return iter;
                 };
 
-                auto strip_escape_symbols = [](std::basic_string<charT> &s) {
+                std::function<void(std::basic_string<charT> &)> strip_escape_symbols = [](std::basic_string<charT> &s) {
                     auto quote_searcher = [&s](size_t pos) { return s.find(TYTI_L(charT, "\\\""), pos); };
                     auto p = quote_searcher(0);
                     while (p != s.npos)
@@ -378,6 +394,9 @@ namespace tyti
                         p = searcher(p);
                     }
                 };
+
+                if (!opt.strip_escape_symbols)
+                    strip_escape_symbols = [](std::basic_string<charT> &) {};
 
                 auto conditional_fullfilled = [&skip_whitespaces, &is_platform_str](IterT &iter, const IterT &last) {
                     iter = skip_whitespaces(iter, last);
@@ -464,12 +483,12 @@ namespace tyti
                             }
                             else
                             {
-                                if (exclude_files.find(value) == exclude_files.end())
+                                if (!opt.ignore_includes && exclude_files.find(value) == exclude_files.end())
                                 {
                                     exclude_files.insert(value);
                                     std::basic_ifstream<charT> i(detail::string_converter(value));
                                     auto str = read_file(i);
-                                    auto file_objs = read_internal<OutputT>(str.begin(), str.end(), exclude_files);
+                                    auto file_objs = read_internal<OutputT>(str.begin(), str.end(), exclude_files, opt);
                                     for (auto &n : file_objs)
                                     {
                                         if (curObj)
@@ -526,10 +545,10 @@ namespace tyti
                 - "std::bad_alloc" if not enough memory coup be allocated
         */
         template <typename OutputT, typename IterT>
-        OutputT read(IterT first, const IterT last)
+        OutputT read(IterT first, const IterT last, const Options &opt = Options{})
         {
             auto exclude_files = std::unordered_set<std::basic_string<typename std::iterator_traits<IterT>::value_type>>{};
-            auto roots = detail::read_internal<OutputT>(first, last, exclude_files);
+            auto roots = detail::read_internal<OutputT>(first, last, exclude_files, opt);
 
             OutputT result;
             if (roots.size() > 1)
@@ -555,14 +574,14 @@ namespace tyti
         std::errc::invalid_argument: iterators throws e.g. out of range
         */
         template <typename OutputT, typename IterT>
-        OutputT read(IterT first, IterT last, std::error_code &ec) NOEXCEPT
+        OutputT read(IterT first, IterT last, std::error_code &ec, const Options &opt = Options{}) NOEXCEPT
 
         {
             ec.clear();
             OutputT r{};
             try
             {
-                r = read<OutputT>(first, last);
+                r = read<OutputT>(first, last, opt);
             }
             catch (std::runtime_error &)
             {
@@ -586,53 +605,53 @@ namespace tyti
         @param ok output bool. true, if parser successed, false, if parser failed
         */
         template <typename OutputT, typename IterT>
-        OutputT read(IterT first, const IterT last, bool *ok) NOEXCEPT
+        OutputT read(IterT first, const IterT last, bool *ok, const Options &opt = Options{}) NOEXCEPT
         {
             std::error_code ec;
-            auto r = read<OutputT>(first, last, ec);
+            auto r = read<OutputT>(first, last, ec, opt);
             if (ok)
                 *ok = !ec;
             return r;
         }
 
         template <typename IterT>
-        inline auto read(IterT first, const IterT last, bool *ok) NOEXCEPT -> basic_object<typename std::iterator_traits<IterT>::value_type>
+        inline auto read(IterT first, const IterT last, bool *ok, const Options &opt = Options{}) NOEXCEPT -> basic_object<typename std::iterator_traits<IterT>::value_type>
         {
-            return read<basic_object<typename std::iterator_traits<IterT>::value_type>>(first, last, ok);
+            return read<basic_object<typename std::iterator_traits<IterT>::value_type>>(first, last, ok, opt);
         }
 
         template <typename IterT>
-        inline auto read(IterT first, IterT last, std::error_code &ec) NOEXCEPT
+        inline auto read(IterT first, IterT last, std::error_code &ec, const Options &opt = Options{}) NOEXCEPT
             -> basic_object<typename std::iterator_traits<IterT>::value_type>
         {
-            return read<basic_object<typename std::iterator_traits<IterT>::value_type>>(first, last, ec);
+            return read<basic_object<typename std::iterator_traits<IterT>::value_type>>(first, last, ec, opt);
         }
 
         template <typename IterT>
-        inline auto read(IterT first, const IterT last)
+        inline auto read(IterT first, const IterT last, const Options &opt = Options{})
             -> basic_object<typename std::iterator_traits<IterT>::value_type>
         {
-            return read<basic_object<typename std::iterator_traits<IterT>::value_type>>(first, last);
+            return read<basic_object<typename std::iterator_traits<IterT>::value_type>>(first, last, opt);
         }
 
         /** \brief Loads a stream (e.g. filestream) into the memory and parses the vdf formatted data.
             throws "std::bad_alloc" if file buffer could not be allocated
         */
         template <typename OutputT, typename iStreamT>
-        OutputT read(iStreamT &inStream, std::error_code &ec)
+        OutputT read(iStreamT &inStream, std::error_code &ec, const Options &opt = Options{})
         {
             // cache the file
             typedef typename iStreamT::char_type charT;
             std::basic_string<charT> str = detail::read_file(inStream);
 
             // parse it
-            return read<OutputT>(str.begin(), str.end(), ec);
+            return read<OutputT>(str.begin(), str.end(), ec, opt);
         }
 
         template <typename iStreamT>
-        inline basic_object<typename iStreamT::char_type> read(iStreamT &inStream, std::error_code &ec)
+        inline basic_object<typename iStreamT::char_type> read(iStreamT &inStream, std::error_code &ec, const Options &opt = Options{})
         {
-            return read<basic_object<typename iStreamT::char_type>>(inStream, ec);
+            return read<basic_object<typename iStreamT::char_type>>(inStream, ec, opt);
         }
 
         /** \brief Loads a stream (e.g. filestream) into the memory and parses the vdf formatted data.
@@ -640,19 +659,19 @@ namespace tyti
             ok == false, if a parsing error occured
         */
         template <typename OutputT, typename iStreamT>
-        OutputT read(iStreamT &inStream, bool *ok)
+        OutputT read(iStreamT &inStream, bool *ok, const Options &opt = Options{})
         {
             std::error_code ec;
-            const auto r = read<OutputT>(inStream, ec);
+            const auto r = read<OutputT>(inStream, ec, opt);
             if (ok)
                 *ok = !ec;
             return r;
         }
 
         template <typename iStreamT>
-        inline basic_object<typename iStreamT::char_type> read(iStreamT &inStream, bool *ok)
+        inline basic_object<typename iStreamT::char_type> read(iStreamT &inStream, bool *ok, const Options &opt = Options{})
         {
-            return read<basic_object<typename iStreamT::char_type>>(inStream, ok);
+            return read<basic_object<typename iStreamT::char_type>>(inStream, ok, opt);
         }
 
         /** \brief Loads a stream (e.g. filestream) into the memory and parses the vdf formatted data.
@@ -660,20 +679,20 @@ namespace tyti
             throws "std::runtime_error" if a parsing error occured
         */
         template <typename OutputT, typename iStreamT>
-        OutputT read(iStreamT &inStream)
+        OutputT read(iStreamT &inStream, const Options &opt)
         {
 
             // cache the file
             typedef typename iStreamT::char_type charT;
             std::basic_string<charT> str = detail::read_file(inStream);
             // parse it
-            return read<OutputT>(str.begin(), str.end());
+            return read<OutputT>(str.begin(), str.end(), opt);
         }
 
         template <typename iStreamT>
-        inline basic_object<typename iStreamT::char_type> read(iStreamT &inStream)
+        inline basic_object<typename iStreamT::char_type> read(iStreamT &inStream, const Options &opt = Options{})
         {
-            return read<basic_object<typename iStreamT::char_type>>(inStream);
+            return read<basic_object<typename iStreamT::char_type>>(inStream, opt);
         }
 
     } // namespace vdf

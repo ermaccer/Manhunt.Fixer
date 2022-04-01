@@ -19,7 +19,7 @@ void PushErrorMessage(eErrorType type)
 		dwWarning = MB_ICONINFORMATION;
 		break;
 	}
-	if (MessageBox(GlobalHWND, message, TOOL_NAME, dwWarning | MB_YESNO) == IDYES)
+	if (MessageBox(gHWND, message, TOOL_NAME, dwWarning | MB_YESNO) == IDYES)
 	{
 		Log::ShowLog();
 	}

@@ -1,16 +1,16 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by Fixer.rc
+// Used by Manhunt.Fixer.rc
 //
 #define IDC_MYICON                      2
-#define IDD_FIXER_DIALOG                102
+#define IDD_MANHUNTFIXER_DIALOG         102
 #define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
 #define IDM_EXIT                        105
-#define IDI_FIXER                       107
+#define IDI_MANHUNTFIXER                107
 #define IDI_SMALL                       108
-#define IDC_FIXER                       109
+#define IDC_MANHUNTFIXER                109
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG1                     129
 #define MANHUNT_PATH                    1000

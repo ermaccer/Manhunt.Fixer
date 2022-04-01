@@ -4,6 +4,7 @@
 #include <shlobj.h>
 #include <fstream>
 #include <vector>
+#include <Shlwapi.h>
 
 #include "..\unzipper.h"
 #include "Error.h"
@@ -154,7 +155,7 @@ bool TaskManager::TaskUnzipDownloadedFiles()
 	bool bResult = true;
 	for (int i = 0; i < vDownloads.size(); i++)
 	{
-		if (std::filesystem::exists(vDownloads[i].name))
+		if (PathFileExists(vDownloads[i].name.c_str()) == TRUE)
 		{
 			std::wstring file = vDownloads[i].name;
 			std::string tmp("", file.length());
@@ -181,103 +182,97 @@ bool TaskManager::TaskUnzipDownloadedFiles()
 
 	}
 
+	SetCurrentDirectory(L"..");
 
-	std::filesystem::current_path(L"..");
+	// somehow antiviruses mark std as a virus?
 
-	// if scripts still doesnt exist somehow
 
-	if (!std::filesystem::exists("scripts"))
+	if (!PathIsDirectory(L"scripts"))
+		CreateDirectory(L"scripts", NULL);
+
+	static wchar_t* files_to_move[] = 
 	{
-		std::filesystem::create_directory("scripts");
-	}
+		L"AudioFix.asi",
+		L"MHP.asi",
+		L"MHP.ini",
+		L"DiscordPlugin.asi"
+	};
 
-	// move audiofix
-	if (std::filesystem::exists("AudioFix.asi"))
+	wchar_t* scripts = L"scripts\\";
+	for (int i = 0; i < sizeof(files_to_move) / sizeof(files_to_move[0]); i++)
 	{
-		std::filesystem::rename("AudioFix.asi", "scripts\\AudioFix.asi");
-	}
+		std::wstring newPath = scripts;
+		newPath += files_to_move[i];
 
-
-	// move mhp
-	if (std::filesystem::exists("MHP.asi"))
-	{
-		std::filesystem::rename("MHP.asi", "scripts\\MHP.asi");
-	}
-	if (std::filesystem::exists("MHP.ini"))
-	{
-		std::filesystem::rename("MHP.ini", "scripts\\MHP.ini");
+		if (PathFileExists(newPath.c_str()))
+			MoveFile(files_to_move[i], newPath.c_str());
 	}
 
 	// rename asi loader
-	if (std::filesystem::exists("dinput8.dll"))
-	{
-		std::filesystem::rename("dinput8.dll", "ddraw.dll");
-	}
+
+	if (PathFileExists(L"dinput8.dll"))
+		MoveFile(L"dinput8.dll", L"ddraw.dll");
+
 
 	// blood
-	if (std::filesystem::exists("bloodfix.txd"))
+	if (PathFileExists(L"bloodfix.txd"))
 	{
-		if (std::filesystem::exists("pictures\\frontend_pc.txd"))
+		if (PathFileExists(L"pictures\\frontend_pc.txd"))
 		{
-			std::filesystem::rename("pictures\\frontend_pc.txd", "pictures\\frontend_pc.txd.bak");
+			MoveFile(L"pictures\\frontend_pc.txd", L"pictures\\frontend_pc.txd.bak");
 			Log::Message(L"INFO: %s | %s %s %s\n", L"TaskUnzipDownloadedFiles", L"A copy of previous frontend_pc.txd has been saved as", L"frontend_pc.txd.bak", L"You may remove it on your own");
 		}
-		std::filesystem::rename("bloodfix.txd", "pictures\\frontend_pc.txd");
+		MoveFile(L"bloodfix.txd", L"pictures\\frontend_pc.txd");
 	}
 
 	// ps2 cash
-	if (std::filesystem::exists("ps2cash.txd"))
+	if (PathFileExists(L"ps2cash.txd"))
 	{
-		if (std::filesystem::exists("levels\\global\\charpak\\cash_pc.txd"))
+		if (PathFileExists(L"levels\\global\\charpak\\cash_pc.txd"))
 		{
-			std::filesystem::rename("levels\\global\\charpak\\cash_pc.txd", "levels\\global\\charpak\\cash_pc.bak");
+			MoveFile(L"levels\\global\\charpak\\cash_pc.txd", L"levels\\global\\charpak\\cash_pc.bak");
 			Log::Message(L"INFO: %s | %s %s %s\n", L"TaskUnzipDownloadedFiles", L"A copy of previous cash_pc.txd has been saved as", L"cash_pc.bak", L"You may remove it on your own");
 		}
-		std::filesystem::rename("ps2cash.txd", "levels\\global\\charpak\\cash_pc.txd");
+		MoveFile(L"ps2cash.txd", L"levels\\global\\charpak\\cash_pc.txd");
 	}
 
 
 	// models fix
-	if (std::filesystem::exists("gmodels_fix.dff"))
+	if (PathFileExists(L"gmodels_fix.dff"))
 	{
-		if (std::filesystem::exists("levels\\global\\pak\\gmodelspc.dff"))
+		if (PathFileExists(L"levels\\global\\pak\\gmodelspc.dff"))
 		{
-			std::filesystem::rename("levels\\global\\pak\\gmodelspc.dff", "levels\\global\\pak\\gmodelspc.bak");
+			MoveFile(L"levels\\global\\pak\\gmodelspc.dff", L"levels\\global\\pak\\gmodelspc.bak");
 			Log::Message(L"INFO: %s | %s %s %s\n", L"TaskUnzipDownloadedFiles", L"A copy of previous gmodelspc.dff has been saved as", L"gmodelspc.bak", L"You may remove it on your own");
 		}
-		std::filesystem::rename("gmodels_fix.dff", "levels\\global\\pak\\gmodelspc.dff");
+		MoveFile(L"gmodels_fix.dff", L"levels\\global\\pak\\gmodelspc.dff");
 	}
 
-	if (std::filesystem::exists("gmodels_fix.txd"))
+	if (PathFileExists(L"gmodels_fix.txd"))
 	{
-		if (std::filesystem::exists("levels\\global\\pak\\gmodelspc.txd"))
+		if (PathFileExists(L"levels\\global\\pak\\gmodelspc.txd"))
 		{
-			std::filesystem::rename("levels\\global\\pak\\gmodelspc.txd", "levels\\global\\pak\\gmodelspc.txd.bak");
+			MoveFile(L"levels\\global\\pak\\gmodelspc.txd", L"levels\\global\\pak\\gmodelspc.txd.bak");
 			Log::Message(L"INFO: %s | %s %s %s\n", L"TaskUnzipDownloadedFiles", L"A copy of previous gmodelspc.txd has been saved as", L"gmodelspc.txd.bak", L"You may remove it on your own");
 		}
-		std::filesystem::rename("gmodels_fix.txd", "levels\\global\\pak\\gmodelspc.txd");
+		MoveFile(L"gmodels_fix.txd", L"levels\\global\\pak\\gmodelspc.txd");
 	}
 	
-	// move discord plugin
-	if (std::filesystem::exists("DiscordPlugin.asi"))
-	{
-		std::filesystem::rename("DiscordPlugin.asi", "scripts\\DiscordPlugin.asi");
-	}
-	// move wide screen textures
-	if (std::filesystem::exists("Manhunt.WidescreenFrontend"))
-	{
-		if (std::filesystem::is_directory("Manhunt.WidescreenFrontend"))
-		{
-			std::filesystem::current_path(L"Manhunt.WidescreenFrontend");
 
-			for (const auto & file : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
-			{
-				size_t len = strGamePath.length() + wcslen(L"\\") + wcslen(L"Manhunt.WidescreenFrontend");
-				std::wstring oldPath = file.path().wstring().substr(len + 1, file.path().wstring().length() - len);
-				std::wstring newPath = L"..\\" + oldPath;
-				std::filesystem::copy(oldPath, newPath, std::filesystem::copy_options::overwrite_existing);
-				_wremove(oldPath.c_str());
-			}
+	// move wide screen textures
+	if (PathIsDirectory(L"Manhunt.WidescreenFrontend"))
+	{
+		SetCurrentDirectory(L"Manhunt.WidescreenFrontend");
+
+		for (const auto & file : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
+		{
+			size_t len = strGamePath.length() + wcslen(L"\\") + wcslen(L"Manhunt.WidescreenFrontend");
+			std::wstring oldPath = file.path().wstring().substr(len + 1, file.path().wstring().length() - len);
+			std::wstring newPath = L"..\\" + oldPath;
+			CopyFile(oldPath.c_str(), newPath.c_str(), FALSE);
+
+			//	std::filesystem::copy(oldPath, newPath, std::filesystem::copy_options::overwrite_existing);
+			_wremove(oldPath.c_str());
 		}
 	}
 
@@ -331,7 +326,6 @@ bool TaskManager::TaskPatchExecutable()
 		pExecutable.seekp(dwOffset, std::ofstream::beg);
 		pExecutable.write((char*)&dwFlags, sizeof(WORD));
 		pExecutable.close();
-
 	}
 
 
@@ -371,11 +365,9 @@ void TaskManager::TaskComplete()
 
 void AskForPMHSettings()
 {
-
-	if (MessageBox(GlobalHWND, L"PluginMH has been installed. Do you wish to open configuration file? \n\nPlease remember that if any update is available, you need to update it manually", TOOL_NAME, MB_ICONINFORMATION | MB_YESNO) == IDYES)
+	if (MessageBox(gHWND, L"PluginMH has been installed. Do you wish to open configuration file? \n\nPlease remember that if any update is available, you might need to update it manually", TOOL_NAME, MB_ICONINFORMATION | MB_YESNO) == IDYES)
 	{
-		std::filesystem::current_path(strGamePath);
+		SetCurrentDirectory(strGamePath.c_str());
 		ShellExecute(0, 0, L"PluginMH.ini", 0, 0, SW_SHOW);
 	}
-
 }
