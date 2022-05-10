@@ -143,9 +143,6 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 					if (IsDlgButtonChecked(hDlg, ENH_WSTEXT))
 						TaskManager::AddDownload(L"https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/manhunt/Manhunt.WidescreenFrontend.zip", L"Manhunt.WidescreenFrontend.zip");
 
-					if (IsDlgButtonChecked(hDlg, ENH_BLDFIX))
-						TaskManager::AddDownload(L"https://github.com/ermaccer/Manhunt.Fixer/raw/master/bloodfix.zip", L"bloodfix.zip");
-
 					if (IsDlgButtonChecked(hDlg, ENH_PS2CASH))
 						TaskManager::AddDownload(L"https://github.com/ermaccer/Manhunt.Fixer/raw/master/ps2cash.zip", L"ps2cash.zip");
 
@@ -205,8 +202,8 @@ INT_PTR CALLBACK AboutBox(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_INITDIALOG:
 		PushLogMessage(GetDlgItem(hDlg, CREDITS_BOX), L"ermaccer - tool programming, executable patch, audio fix, model fixes");
-		PushLogMessage(GetDlgItem(hDlg, CREDITS_BOX), L"ThirteenAG - widescreen fix");
-		PushLogMessage(GetDlgItem(hDlg, CREDITS_BOX), L"Fire_Head - mhpatches, model fixes, code support");
+		PushLogMessage(GetDlgItem(hDlg, CREDITS_BOX), L"ThirteenAG - widescreen fix, d3d8 wrapper");
+		PushLogMessage(GetDlgItem(hDlg, CREDITS_BOX), L"Fire_Head - mhp, model fixes, code support");
 		PushLogMessage(GetDlgItem(hDlg, CREDITS_BOX), L"Ash_735 - graphics design");
 		PushLogMessage(GetDlgItem(hDlg, CREDITS_BOX), L"Testers:");
 		PushLogMessage(GetDlgItem(hDlg, CREDITS_BOX), L"ZT, Dominik, Barbo, 5d0, Geisteskrankenchan, Zach Fett");

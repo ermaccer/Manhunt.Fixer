@@ -52,7 +52,7 @@ std::wstring strCheckFiles[] = {
 	L"scripts\\MHP.asi",
 	// backups
 	// blood fix 
-	L"pictures\\frontend_pc.txd.bak",
+	L"pictures\\frontend_pc.txd.bak",  // no longer needed, but remove because of incompatibilty with mhp
 	// ps2 cash
 	L"levels\\global\\charpak\\cash_pc.bak"
 	// models fix
@@ -169,7 +169,6 @@ bool TaskManager::TaskUnzipDownloadedFiles()
 
 			_wremove(vDownloads[i].name.c_str());
 
-
 			Log::Message(L"INFO: %s | %s %s\n", L"TaskUnzipDownloadedFiles", L"Decompressing: ", vDownloads[i].name.c_str());
 		}
 		else
@@ -213,17 +212,6 @@ bool TaskManager::TaskUnzipDownloadedFiles()
 	if (PathFileExists(L"dinput8.dll"))
 		MoveFile(L"dinput8.dll", L"ddraw.dll");
 
-
-	// blood
-	if (PathFileExists(L"bloodfix.txd"))
-	{
-		if (PathFileExists(L"pictures\\frontend_pc.txd"))
-		{
-			MoveFile(L"pictures\\frontend_pc.txd", L"pictures\\frontend_pc.txd.bak");
-			Log::Message(L"INFO: %s | %s %s %s\n", L"TaskUnzipDownloadedFiles", L"A copy of previous frontend_pc.txd has been saved as", L"frontend_pc.txd.bak", L"You may remove it on your own");
-		}
-		MoveFile(L"bloodfix.txd", L"pictures\\frontend_pc.txd");
-	}
 
 	// ps2 cash
 	if (PathFileExists(L"ps2cash.txd"))
@@ -346,6 +334,7 @@ bool TaskManager::TaskApply60FPSLimit()
 	{
 		std::wstring path = std::filesystem::current_path().wstring() + L"\\d3d8.ini";
 		WritePrivateProfileString(L"MAIN", L"FPSLimit", L"60", path.c_str());
+		WritePrivateProfileString(L"MAIN", L"FPSLimitMode", L"2", path.c_str());
 
 		Log::Message(L"INFO: %s | %s\n", L"TaskApply60FPSLimit", L"Configuration set");
 	}
@@ -365,7 +354,7 @@ void TaskManager::TaskComplete()
 
 void AskForPMHSettings()
 {
-	if (MessageBox(gHWND, L"PluginMH has been installed. Do you wish to open configuration file? \n\nPlease remember that if any update is available, you might need to update it manually", TOOL_NAME, MB_ICONINFORMATION | MB_YESNO) == IDYES)
+	if (MessageBox(gHWND, L"PluginMH has been installed. Do you wish to open configuration file?\n\nPlease remember that if any update is available, you might need to update it manually", TOOL_NAME, MB_ICONINFORMATION | MB_YESNO) == IDYES)
 	{
 		SetCurrentDirectory(strGamePath.c_str());
 		ShellExecute(0, 0, L"PluginMH.ini", 0, 0, SW_SHOW);
