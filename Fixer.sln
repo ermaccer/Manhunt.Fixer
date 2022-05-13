@@ -8,11 +8,14 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
+		Release Libcurl|x86 = Release Libcurl|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D5B13170-B2CD-4444-B5BE-6984FDA8524C}.Debug|x86.ActiveCfg = Debug|Win32
 		{D5B13170-B2CD-4444-B5BE-6984FDA8524C}.Debug|x86.Build.0 = Debug|Win32
+		{D5B13170-B2CD-4444-B5BE-6984FDA8524C}.Release Libcurl|x86.ActiveCfg = Release Libcurl|Win32
+		{D5B13170-B2CD-4444-B5BE-6984FDA8524C}.Release Libcurl|x86.Build.0 = Release Libcurl|Win32
 		{D5B13170-B2CD-4444-B5BE-6984FDA8524C}.Release|x86.ActiveCfg = Release|Win32
 		{D5B13170-B2CD-4444-B5BE-6984FDA8524C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection

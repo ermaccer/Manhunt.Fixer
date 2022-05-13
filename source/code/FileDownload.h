@@ -5,7 +5,7 @@
 #include <string>
 #include <cstdlib>
 
-
+#ifndef  USE_LIBCURL
 class DLCallback
 	: public IBindStatusCallback
 {
@@ -27,5 +27,9 @@ public:
 	STDMETHOD_(ULONG, Release)();
 	STDMETHOD(QueryInterface)( /* [in] */ REFIID riid, /* [iid_is][out] */ void __RPC_FAR * __RPC_FAR * ppvObject);
 };
-
+#endif
 bool RequestDownloadFile(std::wstring url, std::wstring saveA);
+
+#ifdef  USE_LIBCURL
+int libcurl_download_progress(void* clientp, double dltotal,double dlnow,double ultotal,double ulnow);
+#endif //  USE_LIBCURL
